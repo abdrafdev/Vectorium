@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/vectai/static/css/main.664bfb38.css",
+    "main.js": "/vectai/static/js/main.0e9a13d6.js",
+    "static/media/Ivan.png": "/vectai/static/media/Ivan.c640dc0966f74cee0264.png",
+    "static/media/logo.svg": "/vectai/static/media/logo.f9b4797e09c66938ff290f4258fdcb50.svg",
+    "static/media/abdul rehman.jpeg": "/vectai/static/media/abdul rehman.bcc5b30581291b59642e.jpeg",
+    "static/media/Sofía Tahuil.jpeg": "/vectai/static/media/Sofía Tahuil.5569c62d3ccdce5e4014.jpeg",
+    "static/media/raffele.jpeg": "/vectai/static/media/raffele.4a5a70e07973167811d9.jpeg",
+    "static/media/image.jpg": "/vectai/static/media/image.e7f8369ae0470b0421b3.jpg",
+    "static/media/Abdul Rafay.jpeg": "/vectai/static/media/Abdul Rafay.d18fe96c6cb155b89699.jpeg",
+    "static/media/Oluwaseun.jpeg": "/vectai/static/media/Oluwaseun.1b8b9f48538db15fab12.jpeg",
+    "static/media/Stefano.jpeg": "/vectai/static/media/Stefano.b1673a5e7a84825ddfcb.jpeg",
+    "static/media/card.jpg": "/vectai/static/media/card.12f204a33e031adbc14a.jpg",
+    "static/media/Vectorium logo (3).svg": "/vectai/static/media/Vectorium logo (3).1868691f54f94949e763773b04668edb.svg",
+    "index.html": "/vectai/index.html",
+    "main.664bfb38.css.map": "/vectai/static/css/main.664bfb38.css.map",
+    "main.0e9a13d6.js.map": "/vectai/static/js/main.0e9a13d6.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.664bfb38.css",
+    "static/js/main.0e9a13d6.js"
+  ]
+}
