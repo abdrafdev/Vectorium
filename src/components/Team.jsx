@@ -10,24 +10,26 @@ import team8 from "../assets/abdul rehman.jpeg";
 import team9 from "../assets/Gerjon.jpeg";
 import team10 from "../assets/Angel.jpg";
 const teamMembers = [
-  { name: "Enea Benedetto", role: "Founder & Vision Lead", img: team1 },
+  { name: "Enea Benedetto", role: "Founder & Vision Lead", img: team1, linkedin: "https://www.linkedin.com/in/enea-benedetto-6bb07610" },
   {
     name: "Stefano Della Valle",
     role: "Lead Blockchain & AI Engineer",
     img: team2,
+    linkedin: "https://www.linkedin.com/in/stefanodellavalle",
   },
-  { name: "Ivan Sokolov", role: "Security & Infrastructure", img: team3 },
-  { name: "Abdul Rafay", role: "Core Blockchain Engineer", img: team4 },
-  { name: "Raffaele Giove", role: "AI & Automation", img: team5 },
-  { name: "Sofia Tahuil", role: "Design Manager", img: team6 },
-  { name: "Oluwaseun Oluwatuyi", role: "Community Manager", img: team7 },
+  { name: "Ivan Sokolov", role: "Security & Infrastructure", img: team3, linkedin: "https://www.linkedin.com/in/vanyasokolov" },
+  { name: "Abdul Rafay", role: "Core Blockchain Engineer", img: team4, linkedin: "https://www.linkedin.com/in/abdul-rafay-qureshi-5b8669371" },
+  { name: "Raffaele Giove", role: "AI & Automation", img: team5, linkedin: "https://www.linkedin.com/in/raffaele-g-033446252" },
+  { name: "Sofia Tahuil", role: "Design Manager", img: team6, linkedin: "https://www.linkedin.com/in/sofia-tahuil" },
+  { name: "Oluwaseun Oluwatuyi", role: "Community Manager", img: team7, linkedin: "https://www.linkedin.com/in/oluwaseun-oluwatuyi-77aa2b327" },
   {
     name: "Abdulrahman Omar",
     role: "Community and Partnerships Manager",
     img: team8,
+    linkedin: "https://www.linkedin.com/in/abdulrahman-omar-tokendynamo-819422268",
   },
-  { name: "Gerjon Hodaj", role: "Social Media Leader", img: team9 },
-  { name: "Angel", role: "Social Media and Community Manager", img: team10 },
+  { name: "Gerjon Hodaj", role: "Social Media Leader", img: team9, linkedin: "https://www.linkedin.com/in/gerjonhodaj" },
+  { name: "Angel", role: "Social Media and Community Manager", img: team10, linkedin: "https://www.linkedin.com/in/angel-ekemezie-b20a1521ao" },
 ];
 
 export default function Team() {
@@ -123,7 +125,12 @@ export default function Team() {
                     <div className="absolute inset-0 bg-gradient-to-br from-gold via-goldLight to-gold rounded-full blur-lg opacity-30 group-hover:opacity-60 transition-opacity duration-700 animate-pulse"></div>
 
                     {/* Image container with border animation */}
-                    <div className="relative w-full h-full overflow-hidden rounded-full border-4 border-gold/30 group-hover:border-gold transition-all duration-500 shadow-2xl shadow-gold/20">
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative w-full h-full overflow-hidden rounded-full border-4 border-gold/30 group-hover:border-gold transition-all duration-500 shadow-2xl shadow-gold/20 block cursor-pointer"
+                    >
                       <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-goldLight/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                       <img
                         src={member.img}
@@ -133,7 +140,7 @@ export default function Team() {
 
                       {/* Vignette effect */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60 group-hover:opacity-20 transition-opacity duration-500 rounded-full"></div>
-                    </div>
+                    </a>
 
                     {/* Enhanced status indicator */}
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 border-4 border-midnight rounded-full shadow-xl shadow-green-500/50">
