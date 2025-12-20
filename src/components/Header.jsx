@@ -1,38 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import logo from "../assets/logos/logo.svg";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
+  const [activeSection, setActiveSection] = useState("");
 
+  const navLinks = useMemo(
+    () => [
+      { href: "#about", label: "About", icon: "💎" },
+      { href: "#vision", label: "Vision", icon: "🔮" },
+      { href: "#docs", label: "Docs", icon: "📡" },
+      { href: "#team", label: "Team", icon: "⚡" }
+    ],
+    []
+  );
+
+  const sectionRatiosRef = useRef(new Map());
+
+  // Smooth + cheap active-section detection
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-      
-      // Active section detection
-      const sections = ['about', 'vision', 'team', 'docs'];
-      const current = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+    const ids = navLinks.map((l) => l.href.replace(/^#/, ""));
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter(Boolean);
+
+    if (!elements.length) return;
+
+    sectionRatiosRef.current.clear();
+    ids.forEach((id) => sectionRatiosRef.current.set(id, 0));
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = entry.target.id;
+          sectionRatiosRef.current.set(id, entry.isIntersecting ? entry.intersectionRatio : 0);
         }
-        return false;
+
+        let bestId = "";
+        let bestRatio = 0;
+        for (const [id, ratio] of sectionRatiosRef.current.entries()) {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        }
+
+        if (bestId && bestRatio > 0) setActiveSection(bestId);
+      },
+      {
+        // Treat “active” as whichever section is closest to the center of the viewport
+        root: null,
+        rootMargin: "-35% 0px -55% 0px",
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+      }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [navLinks]);
+
+  // Header background on scroll (throttled)
+  useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        setScrolled(window.scrollY > 20);
       });
-      if (current) setActiveSection(current);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, []);
 
-  const navLinks = [
-    { href: '#about', label: 'About', icon: '💎' },
-    { href: '#vision', label: 'Vision', icon: '🔮' },
-    { href: '#docs', label: 'Docs', icon: '📡' },
-    { href: '#team', label: 'Team', icon: '⚡' }
-  ];
+  // Mobile menu polish: ESC to close + lock body scroll
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen]);
+
 
   return (
     <>
@@ -45,7 +109,7 @@ export default function Header() {
       >
         <nav className={`container mx-auto px-4 transition-all duration-300 flex justify-between items-center ${scrolled ? 'py-3' : 'py-4'}`}>
           {/* Simplified Logo */}
-          <a href="#" className="flex items-center gap-2 group">
+          <a href="#hero" className="flex items-center gap-2 group">
             <img
               src={logo}
               alt="Vectorium"
@@ -99,6 +163,8 @@ export default function Header() {
             onClick={() => setMenuOpen(!menuOpen)}
             className="lg:hidden p-2 rounded-md hover:bg-gold/10 transition-all duration-300"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="vect-mobile-menu"
           >
             <div className="flex flex-col gap-1 w-6">
               <span className={`h-0.5 bg-gold transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
@@ -110,9 +176,10 @@ export default function Header() {
       </header>
 
       {/* Mobile Menu */}
-      <div 
+      <div
+        id="vect-mobile-menu"
         className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
-          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
       >
         <div 
@@ -141,20 +208,6 @@ export default function Header() {
         </div>
       </div>
 
-      <style jsx>{`
-        .text-gold {
-          color: #D4AF37;
-        }
-        .bg-gold {
-          background-color: #D4AF37;
-        }
-        .bg-goldLight {
-          background-color: #F4E5B0;
-        }
-        .border-gold {
-          border-color: #D4AF37;
-        }
-      `}</style>
     </>
   );
 }

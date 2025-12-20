@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.39b9ccf9.css",
-    "main.js": "/static/js/main.8b9e0a6b.js",
+    "main.css": "/static/css/main.13bf34d4.css",
+    "main.js": "/static/js/main.cabbae4d.js",
     "static/media/Ivan.png": "/static/media/Ivan.c640dc0966f74cee0264.png",
     "static/media/logo.svg": "/static/media/logo.f9b4797e09c66938ff290f4258fdcb50.svg",
     "static/media/Gerjon.jpeg": "/static/media/Gerjon.70587834ff146bccf20a.jpeg",
@@ -16,11 +16,11 @@
     "static/media/card.jpg": "/static/media/card.12f204a33e031adbc14a.jpg",
     "static/media/Vectorium logo (3).svg": "/static/media/Vectorium logo (3).1868691f54f94949e763773b04668edb.svg",
     "index.html": "/index.html",
-    "main.39b9ccf9.css.map": "/static/css/main.39b9ccf9.css.map",
-    "main.8b9e0a6b.js.map": "/static/js/main.8b9e0a6b.js.map"
+    "main.13bf34d4.css.map": "/static/css/main.13bf34d4.css.map",
+    "main.cabbae4d.js.map": "/static/js/main.cabbae4d.js.map"
   },
   "entrypoints": [
-    "static/css/main.39b9ccf9.css",
-    "static/js/main.8b9e0a6b.js"
+    "static/css/main.13bf34d4.css",
+    "static/js/main.cabbae4d.js"
   ]
 }

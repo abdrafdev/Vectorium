@@ -33,7 +33,7 @@ export default function Roadmap() {
 
   return (
     <>
-      <section id="roadmap">
+      <section id="roadmap" className="section">
         {/* Top scan line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
           <div className="h-full bg-gradient-to-r from-transparent via-gold to-transparent">
@@ -52,7 +52,6 @@ export default function Roadmap() {
 
         <div className="container relative z-10 px-6 mx-auto max-w-7xl">
           {/* Header */}
-          <br /> <br /> <br /> <br />
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2.5 px-5 py-2.5 mb-6 rounded-full bg-midnight/60 backdrop-blur-xl border border-gold/30 shadow-[0_0_40px_rgba(212,175,55,0.15)]">
               <Sparkles className="w-4 h-4 text-gold" />
@@ -237,29 +236,6 @@ export default function Roadmap() {
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent"></div>
       </section>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
-        .animate-scan {
-          animation: scan 3s linear infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 10s linear infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </>
   );
 }

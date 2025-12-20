@@ -1,38 +1,49 @@
 import React, { useState } from "react";
-import { FileText, Settings, FileSignature, FileBadge, ExternalLink, Download, Copy, CheckCircle, Sparkles } from "lucide-react";
+import {
+  FileText,
+  Settings,
+  FileSignature,
+  FileBadge,
+  ExternalLink,
+  Download,
+  Copy,
+  CheckCircle,
+  Sparkles
+} from "lucide-react";
+import { DOCS, EXPLORER_LINKS, TOKEN_MINT_ADDRESS } from "../config/constants";
 
 const documents = [
   {
     icon: FileText,
-    title: "Whitepaper v0.3",
-    description: "Complete project vision",
-    link: "/documents/whitepaper.pdf",
+    title: "Whitepaper",
+    description: "Vision, economics, and governance",
+    link: "/whitepaper",
+    downloadable: false,
+    cta: "View & download"
   },
   {
     icon: Settings,
     title: "Technical Documentation",
-    description: "Architecture details",
-    link: "/documents/technical-paper.pdf",
-  },
-  {
-    icon: FileSignature,
-    title: "Private Sale Agreement",
-    description: "Legal framework",
-    link: "/documents/private-sale.pdf",
+    description: "Architecture and protocol design",
+    link: "/techdoc",
+    downloadable: false,
+    cta: "View & download"
   },
   {
     icon: FileBadge,
-    title: "Term Sheet",
-    description: "Investment terms",
-    link: "/documents/term-sheet.pdf",
-  },
+    title: "Tokenomics",
+    description: "Supply, emissions, and allocations",
+    link: "/tokenomics",
+    downloadable: false,
+    cta: "View & download"
+  }
 ];
 
 export default function Documents() {
   const [copied, setCopied] = useState(false);
   const [hoveredDoc, setHoveredDoc] = useState(null);
 
-  const contractAddress = 'J7gr5uPExeRmTc6GdVNyXj4zmYdXmYLYFC5TkkDngm4x';
+  const contractAddress = TOKEN_MINT_ADDRESS;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(contractAddress);
@@ -42,7 +53,7 @@ export default function Documents() {
 
   return (
     <>
-      <section id="docs">
+      <section id="docs" className="section">
         {/* Top scan line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
           <div className="h-full bg-gradient-to-r from-transparent via-gold to-transparent">
@@ -90,7 +101,7 @@ export default function Documents() {
           </div>
 
           {/* Documents Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {documents.map((doc, idx) => {
               const Icon = doc.icon;
               const isHovered = hoveredDoc === idx;
@@ -99,7 +110,7 @@ export default function Documents() {
                 <a
                   key={idx}
                   href={doc.link}
-                  download
+                  download={doc.downloadable}
                   onMouseEnter={() => setHoveredDoc(idx)}
                   onMouseLeave={() => setHoveredDoc(null)}
                   className="group relative block"
@@ -156,14 +167,14 @@ export default function Documents() {
                       {/* Download indicator */}
                       <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gold/10 border border-gold/30 group-hover:bg-gold/20 group-hover:border-gold transition-all duration-500">
                         <Download className="w-4 h-4 text-gold group-hover:animate-bounce" />
-                        <span className="text-xs font-bold text-gold uppercase tracking-wider">Download PDF</span>
+                        <span className="text-xs font-bold text-gold uppercase tracking-wider">{doc.cta}</span>
                       </div>
 
                       {/* External link */}
                       <div className={`mt-3 flex items-center gap-1 text-xs text-gray-500 group-hover:text-gold transition-all duration-300 ${
                         isHovered ? 'translate-x-1' : ''
                       }`}>
-                        <span>Click to Download</span>
+                        <span>{doc.downloadable ? 'Click to Download' : 'Open document page'}</span>
                         <ExternalLink className="w-3 h-3" />
                       </div>
                     </div>
@@ -217,7 +228,7 @@ export default function Documents() {
                       <div className="flex-1 min-w-0">
                         <div className="text-xs text-gray-500 uppercase tracking-wider mb-2 font-bold">Contract Address</div>
                         <a
-                          href="https://solscan.io/token/J7gr5uPExeRmTc6GdVNyXj4zmYdXmYLYFC5TkkDngm4x"
+                          href={EXPLORER_LINKS.solscanToken}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="group/link flex items-center gap-2 text-gold hover:text-goldLight transition-colors duration-300"
@@ -280,36 +291,6 @@ export default function Documents() {
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent"></div>
       </section>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
-        .animate-scan {
-          animation: scan 3s linear infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 10s linear infinite;
-        }
-        .animate-spin-reverse {
-          animation: spin-reverse 8s linear infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { COMMUNITY_LINKS } from "../config/constants";
 import team1 from "../assets/card.jpg";
 import team2 from "../assets/Stefano.jpeg";
 import team3 from "../assets/Ivan.png";
@@ -135,6 +136,8 @@ export default function Team() {
                       <img
                         src={member.img}
                         alt={member.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover relative z-10 group-hover:scale-110 transition-transform duration-700 ease-out"
                       />
 
@@ -232,7 +235,7 @@ export default function Team() {
                   </div>
 
                   <a
-                    href="https://t.me/VectoriumProject"
+                    href={COMMUNITY_LINKS.telegram}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-gold/50 text-gold font-semibold text-lg hover:bg-gold/10 hover:border-gold transition-all duration-300"
@@ -247,20 +250,6 @@ export default function Team() {
         </div>
       </div>
 
-      <style jsx>{`
-        @keyframes gradient {
-          0%,
-          100% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-        }
-        .animate-gradient {
-          animation: gradient 8s ease infinite;
-        }
-      `}</style>
     </section>
   );
 }

@@ -1,14 +1,6 @@
 import React from "react";
 import logo from "../assets/logos/Vectorium logo (3).svg";
-
-const COMMUNITY_LINKS = {
-  telegram: "https://t.me/VectoriumProject",
-  linkedin: "https://www.linkedin.com/company/vectorium/",
-  twitter: "https://x.com/vectorium_co",
-  facebook: "https://www.facebook.com/share/1FmhXR6FWW/?mibextid=wwXIfr",
-  instagram: "https://www.instagram.com/vectorium.co?igsh=cnVvcHJiYTdyem1o",
-  discord: "https://discord.gg/jy6P6wp4h"
-};
+import { COMMUNITY_LINKS } from "../config/constants";
 
 export default function Footer() {
   const socialLinks = [
@@ -51,10 +43,13 @@ export default function Footer() {
   ];
 
   const navLinks = [
-    { href: "#about", label: "About", icon: "💎" },
-    { href: "#vision", label: "Vision", icon: "🔮" },
-    { href: "#team", label: "Team", icon: "⚡" },
-    { href: "#docs", label: "Documents", icon: "📡" }
+    { href: "/#about", label: "About", icon: "💎" },
+    { href: "/#vision", label: "Vision", icon: "🔮" },
+    { href: "/#team", label: "Team", icon: "⚡" },
+    { href: "/#docs", label: "Documents", icon: "📡" },
+    { href: "/whitepaper", label: "Whitepaper", icon: "📄" },
+    { href: "/techdoc", label: "Technical Doc", icon: "🧠" },
+    { href: "/tokenomics", label: "Tokenomics", icon: "📊" }
   ];
 
   return (
@@ -255,32 +250,6 @@ export default function Footer() {
       {/* Bottom Glow Line */}
       <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/40 to-transparent"></div>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.8; }
-        }
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-scan {
-          animation: scan 3s linear infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 3s ease-in-out infinite;
-        }
-      `}</style>
     </footer>
   );
 }

@@ -68,6 +68,7 @@ export default function About() {
                       <img
                         src={aboutImg}
                         alt="VECT.AI Platform"
+                        decoding="async"
                         className="w-80 mx-auto opacity-95 group-hover:opacity-100 transition-all duration-500"
                         style={{
                           filter: 'drop-shadow(0 10px 40px rgba(212,175,55,0.3))'

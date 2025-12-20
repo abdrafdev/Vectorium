@@ -1,28 +1,80 @@
-import React, { useState, useEffect } from "react";
-import { Sparkles, Zap, Shield, Globe, ArrowRight, Download, MessageCircle } from "lucide-react";
-
-// Replace with your actual constants
-const COMMUNITY_LINKS = {
-  telegram: "https://t.me/vectorium"
-};
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Sparkles,
+  Zap,
+  Shield,
+  Globe,
+  ArrowRight,
+  Download,
+  MessageCircle,
+  Copy,
+  CheckCircle
+} from "lucide-react";
+import { COMMUNITY_LINKS, DOCS, EXPLORER_LINKS, TOKEN_MINT_ADDRESS } from "../config/constants";
 
 export default function Hero() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const heroRef = useRef(null);
+  const rafRef = useRef(0);
+  const lastPosRef = useRef({ x: 50, y: 50 });
+
   const [isVisible, setIsVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 18 }, () => ({
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        size: 1 + Math.random() * 2,
+        opacity: 0.15 + Math.random() * 0.35,
+        duration: 6 + Math.random() * 10,
+        delay: Math.random() * 5
+      })),
+    []
+  );
 
   useEffect(() => {
     setIsVisible(true);
-    
-    const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
+
+    const el = heroRef.current;
+    if (!el) return;
+
+    // Set initial pointer position
+    el.style.setProperty("--mx", "50%");
+    el.style.setProperty("--my", "50%");
+
+    const commit = () => {
+      rafRef.current = 0;
+      const { x, y } = lastPosRef.current;
+      el.style.setProperty("--mx", `${x}%`);
+      el.style.setProperty("--my", `${y}%`);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    const onPointerMove = (e) => {
+      if (typeof e.clientX !== "number" || typeof e.clientY !== "number") return;
+      lastPosRef.current = {
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100
+      };
+      if (!rafRef.current) rafRef.current = window.requestAnimationFrame(commit);
+    };
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+    };
   }, []);
+
+  const onCopyMint = async () => {
+    try {
+      await navigator.clipboard.writeText(TOKEN_MINT_ADDRESS);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
 
   const stats = [
     { icon: Zap, label: 'Lightning Fast', value: 'Sub-second', color: 'from-gold to-goldLight' },
@@ -33,16 +85,18 @@ export default function Hero() {
   return (
     <>
       <section
+        ref={heroRef}
         id="hero"
-        className="relative min-h-screen flex flex-col justify-center items-center text-center"
+        className="relative min-h-[calc(100vh-6rem)] flex flex-col justify-center items-center text-center overflow-hidden"
       >
-        {/* Dynamic mouse-following gradient */}
-        <div 
-          className="absolute inset-0 opacity-20 transition-all duration-300 pointer-events-none"
+        {/* Dynamic pointer-following gradient (no React re-renders) */}
+        <div
+          className="absolute inset-0 opacity-20 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: `radial-gradient(600px circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(212,175,55,0.15), transparent 40%)`
+            background:
+              "radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(212,175,55,0.15), transparent 40%)"
           }}
-        ></div>
+        />
 
         {/* Animated gradient mesh */}
         <div className="absolute inset-0 opacity-30">
@@ -66,24 +120,33 @@ export default function Hero() {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold/10 to-transparent animate-scan-vertical"></div>
         </div>
 
-        {/* Floating particles */}
+        {/* Floating particles (stable) */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(20)].map((_, i) => (
+          {particles.map((p, i) => (
             <div
               key={i}
-              className="absolute w-1 h-1 bg-gold rounded-full opacity-30"
+              className="absolute bg-gold rounded-full"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
-                animationDelay: `${Math.random() * 5}s`
+                left: `${p.left}%`,
+                top: `${p.top}%`,
+                width: `${p.size}px`,
+                height: `${p.size}px`,
+                opacity: p.opacity,
+                animation: `float ${p.duration}s ease-in-out infinite`,
+                animationDelay: `${p.delay}s`
               }}
-            ></div>
+            />
           ))}
         </div>
 
         {/* Content */}
-        <div className={`relative z-10 max-w-6xl px-6 transition-all duration-1500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div
+          className={`relative z-10 w-full transition-all duration-1000 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+          }`}
+        >
+          <div className="container">
+            <div className="max-w-6xl mx-auto">
           
           {/* Badge with enhanced design */}
           <div className="flex justify-center mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
@@ -152,17 +215,17 @@ export default function Hero() {
           <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '600ms' }}>
             A <span className="relative inline-block group/text">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-goldLight font-bold">decentralized intelligence protocol</span>
-              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-gold to-goldLight scale-x-0 group-hover/text:scale-x-100 transition-transform duration-500"></span>
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-gold to-goldLight scale-x-0 group-hover/text:scale-x-100 transition-transform duration-500" aria-hidden="true"></span>
             </span>{' '}
             integrating cutting-edge{' '}
             <span className="relative inline-block group/text">
               <span className="text-gold font-bold">AI</span>
-              <span className="absolute inset-0 text-goldLight blur-sm opacity-0 group-hover/text:opacity-100 transition-opacity duration-300">AI</span>
+              <span className="absolute inset-0 text-goldLight blur-sm opacity-0 group-hover/text:opacity-100 transition-opacity duration-300" aria-hidden="true">AI</span>
             </span>{' '}
             and{' '}
             <span className="relative inline-block group/text">
               <span className="text-gold font-bold">tokenized data streams</span>
-              <span className="absolute inset-0 text-goldLight blur-sm opacity-0 group-hover/text:opacity-100 transition-opacity duration-300">tokenized data streams</span>
+              <span className="absolute inset-0 text-goldLight blur-sm opacity-0 group-hover/text:opacity-100 transition-opacity duration-300" aria-hidden="true">tokenized data streams</span>
             </span>.
           </p>
 
@@ -171,14 +234,14 @@ export default function Hero() {
             {/* Primary CTA */}
             <div className="relative group/btn">
               <div className="absolute -inset-2 bg-gradient-to-r from-gold via-goldLight to-gold rounded-2xl blur-xl opacity-50 group-hover/btn:opacity-100 animate-pulse-slow transition-opacity duration-700"></div>
-              
-              <a 
-                href="#buy" 
+
+              <a
+                href="#buy"
                 className="relative flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-gradient-to-r from-gold via-goldLight to-gold rounded-xl font-black text-sm md:text-base lg:text-lg uppercase tracking-widest text-black overflow-hidden group-hover/btn:scale-105 transition-all duration-500 shadow-[0_0_40px_rgba(212,175,55,0.6)]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-goldLight via-white to-gold opacity-0 group-hover/btn:opacity-100 transition-opacity duration-700"></div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                
+
                 <Zap className="relative w-5 h-5 md:w-6 md:h-6 group-hover/btn:rotate-12 transition-transform duration-300" />
                 <span className="relative">Buy Tokens</span>
                 <ArrowRight className="relative w-4 h-4 md:w-5 md:h-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
@@ -186,36 +249,72 @@ export default function Hero() {
             </div>
 
             {/* Secondary CTA */}
-<a 
-  href="/documents/whitepaper.pdf" 
-  download="Vectorium-Whitepaper.pdf"
-  className="group relative flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-midnight/40 backdrop-blur-xl rounded-xl font-bold text-sm md:text-base lg:text-lg uppercase tracking-wider text-gold border-2 border-gold/50 hover:border-gold hover:bg-gold/10 transition-all duration-500 overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:shadow-[0_0_50px_rgba(212,175,55,0.4)] hover:scale-105"
->
-  <div className="absolute inset-0 bg-gradient-to-r from-gold/10 via-goldLight/10 to-gold/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
-  
-  <Download className="relative w-5 h-5 md:w-6 md:h-6 group-hover:translate-y-1 transition-transform duration-300" />
-  <span className="relative">Whitepaper</span>
-  <ArrowRight className="relative w-4 h-4 md:w-5 md:h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-</a>
+            <a
+              href="/whitepaper"
+              className="group relative flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-midnight/40 backdrop-blur-xl rounded-xl font-bold text-sm md:text-base lg:text-lg uppercase tracking-wider text-gold border-2 border-gold/50 hover:border-gold hover:bg-gold/10 transition-all duration-500 overflow-hidden shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:shadow-[0_0_50px_rgba(212,175,55,0.4)] hover:scale-105"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-gold/10 via-goldLight/10 to-gold/10 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
 
+              <Download className="relative w-5 h-5 md:w-6 md:h-6 group-hover:translate-y-1 transition-transform duration-300" />
+              <span className="relative">View whitepaper</span>
+              <ArrowRight className="relative w-4 h-4 md:w-5 md:h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+            </a>
 
             {/* Tertiary CTA */}
-            <a 
-              href={COMMUNITY_LINKS.telegram || "https://t.me/VectoriumProject"} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={COMMUNITY_LINKS.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group relative flex items-center gap-3 px-8 md:px-10 py-4 md:py-5 bg-transparent backdrop-blur-xl rounded-xl font-bold text-sm md:text-base lg:text-lg uppercase tracking-wider text-gray-300 border-2 border-gray-600 hover:border-gold hover:text-gold transition-all duration-500 overflow-hidden hover:shadow-[0_0_40px_rgba(212,175,55,0.3)] hover:scale-105"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
-              
+
               <MessageCircle className="relative w-5 h-5 md:w-6 md:h-6 group-hover:rotate-12 transition-transform duration-300" />
               <span className="relative">Join Community</span>
               <ArrowRight className="relative w-4 h-4 md:w-5 md:h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
             </a>
           </div>
 
+          {/* Trust strip */}
+          <div className="mt-8 flex flex-col md:flex-row items-center justify-center gap-3 text-xs text-gray-400">
+            <a
+              href={EXPLORER_LINKS.solscanToken}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="badge border-gold/20 bg-black/30 hover:border-gold/50 transition-colors"
+            >
+              <Shield className="w-3.5 h-3.5 text-gold" />
+              Verified on Solana • Solscan
+            </a>
+
+            <span className="badge font-mono border-white/10 bg-black/20">
+              Mint: {TOKEN_MINT_ADDRESS.slice(0, 4)}…{TOKEN_MINT_ADDRESS.slice(-4)}
+            </span>
+
+            <button
+              type="button"
+              onClick={onCopyMint}
+              className="badge border-white/10 bg-black/20 hover:border-gold/50 transition-colors"
+            >
+              {copied ? (
+                <>
+                  <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                  Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5 text-gold" />
+                  Copy mint
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Stats */}
-          <div className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto animate-fade-in" style={{ animationDelay: '1000ms' }}>
+          <div
+            className="mt-14 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto animate-fade-in"
+            style={{ animationDelay: "1000ms" }}
+          >
             {stats.map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -256,6 +355,8 @@ export default function Hero() {
               );
             })}
           </div>
+            </div>
+          </div>
         </div>
 
         {/* Scroll indicator */}
@@ -269,86 +370,6 @@ export default function Hero() {
         </div>
       </section>
 
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translate(0, 0); }
-          25% { transform: translate(10px, -10px); }
-          50% { transform: translate(-5px, 5px); }
-          75% { transform: translate(-10px, -5px); }
-        }
-        @keyframes scan-vertical {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100%); }
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.5; }
-          50% { opacity: 1; }
-        }
-        @keyframes pulse-slower {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.7; }
-        }
-        @keyframes pulse-slowest {
-          0%, 100% { opacity: 0.2; }
-          50% { opacity: 0.5; }
-        }
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes bounce-slow {
-          0%, 100% { transform: translateY(0) translateX(-50%); }
-          50% { transform: translateY(-10px) translateX(-50%); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { rotate: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes scroll-down {
-          0% { transform: translateY(0); opacity: 0; }
-          50% { opacity: 1; }
-          100% { transform: translateY(12px); opacity: 0; }
-        }
-        .animate-scan-vertical {
-          animation: scan-vertical 8s linear infinite;
-        }
-        .animate-gradient {
-          animation: gradient 8s ease infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-        .animate-pulse-slower {
-          animation: pulse-slower 6s ease-in-out infinite;
-        }
-        .animate-pulse-slowest {
-          animation: pulse-slowest 8s ease-in-out infinite;
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
-          opacity: 0;
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 2s ease-in-out infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 20s linear infinite;
-        }
-        .animate-spin-reverse {
-          animation: spin-reverse 15s linear infinite;
-        }
-        .animate-scroll-down {
-          animation: scroll-down 2s ease-in-out infinite;
-        }
-      `}</style>
     </>
   );
 }

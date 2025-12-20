@@ -1,14 +1,27 @@
 import React, { useState } from "react";
-import { Wallet, ArrowRightLeft, Settings, Gift, ExternalLink, Sparkles, Zap, Shield } from "lucide-react";
+import {
+  Wallet,
+  ArrowRightLeft,
+  Settings,
+  Gift,
+  ExternalLink,
+  Sparkles,
+  Zap,
+  Shield,
+  Copy,
+  CheckCircle
+} from "lucide-react";
+import { EXPLORER_LINKS, TOKEN_MINT_ADDRESS } from "../config/constants";
 
 export default function BuyWidget() {
-  const [activeChain, setActiveChain] = useState('bsc');
+  const [activeChain, setActiveChain] = useState("jupiter");
+  const [copied, setCopied] = useState(false);
 
   const steps = [
     {
       icon: Wallet,
       title: "Connect Wallet",
-      description: "MetaMask, Phantom, or WalletConnect"
+      description: "Phantom / Solflare (Solana)"
     },
     {
       icon: ArrowRightLeft,
@@ -29,26 +42,36 @@ export default function BuyWidget() {
 
   const chains = [
     {
-      id: 'bsc',
-      name: 'Raydium',
-      network: 'BSC',
-      color: 'from-gold to-goldLight',
-      url: 'https://solscan.io/account/E8JMgYBsthxJkQBKo9pjVgJxaKzpePpmU7YiqDvrzd3b',
-      icon: '🥞'
+      id: "jupiter",
+      name: "Jupiter",
+      network: "Solana",
+      color: "from-gold to-goldLight",
+      url: "https://jup.ag",
+      icon: "🪐"
     },
     {
-      id: 'solana',
-      name: 'Jupiter',
-      network: 'Solana',
-      color: 'from-goldLight to-gold',
-      url: 'https://jup.ag',
-      icon: '🪐'
+      id: "raydium",
+      name: "Raydium",
+      network: "Solana",
+      color: "from-goldLight to-gold",
+      url: "https://raydium.io/swap/",
+      icon: "🌊"
     }
   ];
 
+  const onCopyMint = async () => {
+    try {
+      await navigator.clipboard.writeText(TOKEN_MINT_ADDRESS);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  };
+
   return (
     <>
-      <section id="buy">
+      <section id="buy" className="section">
         {/* Top scan line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
           <div className="h-full bg-gradient-to-r from-transparent via-gold to-transparent">
@@ -82,6 +105,41 @@ export default function BuyWidget() {
                 Buy VECT.AI
               </span>
             </h2>
+
+            {/* Trust mini-strip */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-xs text-gray-400">
+              <a
+                href={EXPLORER_LINKS.solscanToken}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="badge border-gold/20 bg-black/20 hover:border-gold/50 transition-colors"
+              >
+                <Shield className="w-3.5 h-3.5 text-gold" />
+                View on Solscan
+              </a>
+
+              <span className="badge font-mono border-white/10 bg-black/10">
+                Mint: {TOKEN_MINT_ADDRESS.slice(0, 4)}…{TOKEN_MINT_ADDRESS.slice(-4)}
+              </span>
+
+              <button
+                type="button"
+                onClick={onCopyMint}
+                className="badge border-white/10 bg-black/10 hover:border-gold/50 transition-colors"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-gold" />
+                    Copy mint
+                  </>
+                )}
+              </button>
+            </div>
 
             <div className="mt-8 flex items-center justify-center gap-3">
               <div className="w-12 h-[2px] bg-gradient-to-r from-transparent to-gold"></div>
@@ -303,36 +361,6 @@ export default function BuyWidget() {
         </div>
       </section>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
-        .animate-scan {
-          animation: scan 3s linear infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 10s linear infinite;
-        }
-        .animate-spin-reverse {
-          animation: spin-reverse 8s linear infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </>
   );
 }

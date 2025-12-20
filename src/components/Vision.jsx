@@ -30,7 +30,7 @@ export default function Vision() {
 
   return (
     <>
-      <section id="vision" >
+      <section id="vision" className="section">
         {/* Futuristic top glow line */}
         <div className="absolute top-0 left-0 right-0 h-[1px] overflow-hidden">
           <div className="h-full bg-gradient-to-r from-transparent via-gold to-transparent">
@@ -206,36 +206,6 @@ export default function Vision() {
         <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent"></div>
       </section>
 
-      <style jsx>{`
-        @keyframes scan {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-        @keyframes pulse-slow {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
-        .animate-scan {
-          animation: scan 3s linear infinite;
-        }
-        .animate-spin-slow {
-          animation: spin-slow 10s linear infinite;
-        }
-        .animate-spin-reverse {
-          animation: spin-reverse 8s linear infinite;
-        }
-        .animate-pulse-slow {
-          animation: pulse-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </>
   );
 }
